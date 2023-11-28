@@ -13,6 +13,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -43,7 +44,7 @@ class AdocaoControllerTest {
     }
 
     @Test
-    void deveriaDevolverCodigo200ParaSolicitacaoDeAdocaoComErros() throws Exception {
+    void deveriaDevolverCodigo200ParaSolicitacaoDeAdocao() throws Exception {
         //ARRANGE
         String json = """
                 {
@@ -56,6 +57,51 @@ class AdocaoControllerTest {
         //ACT
         MockHttpServletResponse response = mockMvc.perform(
                         post("/adocoes")
+                                .content(json)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andReturn()
+                .getResponse();
+
+        //ASSERT
+        Assertions.assertEquals(HttpStatus.OK.value(), response.getStatus());
+    }
+
+    @Test
+    void deveriaDevolverCodigo200ParaAprovacaoDeAdocao() throws Exception {
+        //ARRANGE
+        String json = """
+                {
+                    "idAdocao": 1
+                }
+                """;
+
+        //ACT
+        MockHttpServletResponse response = mockMvc.perform(
+                        put("/adocoes/aprovar")
+                                .content(json)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andReturn()
+                .getResponse();
+
+        //ASSERT
+        Assertions.assertEquals(HttpStatus.OK.value(), response.getStatus());
+    }
+
+    @Test
+    void deveriaDevolverCodigo200ParaReprovacaoDeAdocao() throws Exception {
+        //ARRANGE
+        String json = """
+                {
+                    "idAdocao": 1,
+                    "justificativa": "Justificativa qualquer"
+                }
+                """;
+
+        //ACT
+        MockHttpServletResponse response = mockMvc.perform(
+                        put("/adocoes/reprovar")
                                 .content(json)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
